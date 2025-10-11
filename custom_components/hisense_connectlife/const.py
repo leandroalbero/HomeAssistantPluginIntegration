@@ -13,7 +13,7 @@ from homeassistant.components.climate.const import (
 )
 from homeassistant.const import ATTR_TEMPERATURE, Platform
 
-DOMAIN = "hisense_ac_plugin"
+DOMAIN = "hisense_connectlife"
 DOMAINW = "hisense_we_plugin"
 STATE_HIGH_DEMANDONE = "high_demand_one"
 # Custom Attributes

@@ -1,14 +1,12 @@
-# Hisense Air Conditioner Integration for Home Assistant
+# Hisense ConnectLife Integration for Home Assistant
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
-[![HACS][hacsbadge]][hacs]
 
 **English** | [中文](README_zh.md)
 
-This integration allows you to control Hisense smart home devices through Home Assistant using the ConnectLife cloud
-service.
+This is the official Home Assistant core integration for Hisense smart home devices through the ConnectLife cloud service.
 
 ## Features
 
@@ -39,14 +37,14 @@ service.
 - ConnectLife account with registered devices
 - Active internet connection for cloud API access
 
-### Method 1: HACS (Recommended)
+### Installation (Core Integration)
 
-1. Open HACS in your Home Assistant instance
-2. Go to **Integrations**
-3. Click the **Explore & Download Repositories** button
-4. Search for "Hisense Air Conditioner"
-5. Click **Download**
-6. Restart Home Assistant
+This integration is available as a core integration in Home Assistant. To install:
+
+1. Go to **Settings** → **Devices & Services**
+2. Click **Add Integration**
+3. Search for "Hisense ConnectLife"
+4. Follow the configuration steps
 
 ### Method 2: Manual Installation
 
@@ -205,8 +203,8 @@ logger:
 ### Development Setup
 
 ```bash
-git clone https://github.com/Connectlife-LLC/HomeAssistantPlugin.git
-cd HomeAssistantPlugin
+git clone https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration.git
+cd HomeAssistantPluginIntegration
 # Set up your development environment
 ```
 
@@ -229,22 +227,22 @@ Use at your own risk.
 
 **Made with ❤️ for the Home Assistant community**
 
-[releases-shield]: https://img.shields.io/github/release/Connectlife-LLC/HomeAssistantPlugin.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
 
-[releases]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/releases
+[releases]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/releases
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/Connectlife-LLC/HomeAssistantPlugin.svg?style=for-the-badge
+[commits-shield]: https://img.shields.io/github/commit-activity/y/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
 
-[commits]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/commits/main
+[commits]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/commits/main
 
-[license-shield]: https://img.shields.io/github/license/Connectlife-LLC/HomeAssistantPlugin.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
 
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 
 [hacs]: https://github.com/hacs/integration
 
-[issues]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/issues
+[issues]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/issues
 
-[discussions]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/discussions
+[discussions]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/discussions
 
-[wiki]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/wiki
+[wiki]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/wiki

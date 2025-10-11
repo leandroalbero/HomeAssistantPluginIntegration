@@ -28,7 +28,7 @@ class HisenseACPluginDataUpdateCoordinator(DataUpdateCoordinator):
         super().__init__(
             hass,
             _LOGGER,
-            name="hisense_ac_plugin",
+            name="hisense_connectlife",
             update_interval=timedelta(seconds=UPDATE_INTERVAL),
         )
         self.api_client = api_client

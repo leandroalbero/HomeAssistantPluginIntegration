@@ -3,11 +3,10 @@
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
-[![HACS][hacsbadge]][hacs]
 
 [English](README.md) | **中文**
 
-这个集成允许您通过 Home Assistant 使用 ConnectLife 云服务控制海信智能家电设备。
+这是海信智能家电设备的官方 Home Assistant 核心集成，通过 ConnectLife 云服务提供支持。
 
 ## 功能特性
 
@@ -39,14 +38,14 @@
 - 已注册设备的 ConnectLife 账户
 - 用于云 API 访问的活跃网络连接
 
-### 方法 1：HACS（推荐）
+### 安装方法（核心集成）
 
-1. 在您的 Home Assistant 实例中打开 HACS
-2. 转到 **集成**
-3. 点击 **浏览和下载仓库** 按钮
-4. 搜索 "Hisense Air Conditioner"
-5. 点击 **下载**
-6. 重启 Home Assistant
+此集成作为 Home Assistant 的核心集成提供。安装方法：
+
+1. 转到 **设置** → **设备与服务**
+2. 点击 **添加集成**
+3. 搜索 "Hisense ConnectLife"
+4. 按照配置步骤操作
 
 ### 方法 2：手动安装
 
@@ -206,8 +205,8 @@ logger:
 ### 开发环境设置
 
 ```bash
-git clone https://github.com/Connectlife-LLC/HomeAssistantPlugin.git
-cd HomeAssistantPlugin
+git clone https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration.git
+cd HomeAssistantPluginIntegration
 # 设置您的开发环境
 ```
 
@@ -229,13 +228,11 @@ cd HomeAssistantPlugin
 
 **❤️ 为 Home Assistant 社区制作**
 
-[releases-shield]: https://img.shields.io/github/release/Connectlife-LLC/HomeAssistantPlugin.svg?style=for-the-badge
-[releases]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/releases
-[commits-shield]: https://img.shields.io/github/commit-activity/y/Connectlife-LLC/HomeAssistantPlugin.svg?style=for-the-badge
-[commits]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/commits/main
-[license-shield]: https://img.shields.io/github/license/Connectlife-LLC/HomeAssistantPlugin.svg?style=for-the-badge
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[hacs]: https://github.com/hacs/integration
-[issues]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/issues
-[discussions]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/discussions
-[wiki]: https://github.com/Connectlife-LLC/HomeAssistantPlugin/wiki
+[releases-shield]: https://img.shields.io/github/release/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
+[releases]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/releases
+[commits-shield]: https://img.shields.io/github/commit-activity/y/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
+[commits]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/commits/main
+[license-shield]: https://img.shields.io/github/license/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
+[issues]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/issues
+[discussions]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/discussions
+[wiki]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/wiki

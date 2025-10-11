@@ -237,9 +237,6 @@ Use at your own risk.
 
 [license-shield]: https://img.shields.io/github/license/Connectlife-LLC/HomeAssistantPluginIntegration.svg?style=for-the-badge
 
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-
-[hacs]: https://github.com/hacs/integration
 
 [issues]: https://github.com/Connectlife-LLC/HomeAssistantPluginIntegration/issues
 

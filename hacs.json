@@ -1,0 +1,14 @@
+{
+  "name": "Hisense ConnectLife",
+  "hacs": "1.6.0",
+  "domains": [
+    "climate",
+    "sensor",
+    "switch",
+    "number",
+    "humidifier",
+    "water_heater"
+  ],
+  "iot_class": "Cloud Polling",
+  "homeassistant": "2023.1.0"
+}

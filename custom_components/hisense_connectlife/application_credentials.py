@@ -6,10 +6,25 @@ import logging
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_entry_oauth2_flow
+from homeassistant.helpers.network import get_url
 
 from .const import CLIENT_ID, CLIENT_SECRET, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def get_redirect_url(hass: HomeAssistant) -> str:
+    """Get the redirect URL for OAuth2.
+
+    Uses Home Assistant's URL detection to get the actual URL
+    that Home Assistant is accessible at.
+    """
+    try:
+        url = get_url(hass, allow_ip=True, prefer_external=False)
+        return f"{url}/auth/external/callback"
+    except Exception:
+        # Fallback to the hardcoded URL if get_url fails
+        return "http://homeassistant.local:8123/auth/external/callback"
 
 
 class HisenseApplicationCredentials:
@@ -48,4 +63,4 @@ class HisenseOAuth2Implementation(config_entry_oauth2_flow.LocalOAuth2Implementa
     @property
     def redirect_uri(self) -> str:
         """Return the redirect URI."""
-        return "http://homeassistant.local:8123/auth/external/callback"
+        return get_redirect_url(self.hass)

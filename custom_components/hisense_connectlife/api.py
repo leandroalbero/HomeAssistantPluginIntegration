@@ -1,4 +1,5 @@
 """API client for Hisense ConnectLife."""
+
 from __future__ import annotations
 
 import logging
@@ -27,16 +28,26 @@ from .const import (
     CLIENT_ID,
     CLIENT_SECRET,
     DeviceType,
-    DEVICE_TYPES, DOMAIN, API_GET_HOUR_POWER, API_SELF_CHECK,
+    DEVICE_TYPES,
+    DOMAIN,
+    API_GET_HOUR_POWER,
+    API_SELF_CHECK,
 )
 from .devices.base import DeviceAttribute
 from .oauth2 import OAuth2Session
 from .websocket import HisenseWebSocket
-from .devices import get_device_parser, BaseBeanParser, BaseDeviceParser, SplitWater035699Parser, Humidity007Parser, \
-    Split006299Parser
+from .devices import (
+    get_device_parser,
+    BaseBeanParser,
+    BaseDeviceParser,
+    SplitWater035699Parser,
+    Humidity007Parser,
+    Split006299Parser,
+)
 from .models import DeviceInfo, HisenseApiError
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class HisenseApiClient:
     """Hisense API client."""
@@ -274,25 +285,32 @@ class HisenseApiClient:
                 _LOGGER.debug("Loaded translations for %s: %s", lang)
             except Exception as e:
                 _LOGGER.error(f"Failed to load translations for {lang}: {e}")
+
     def calculate_signature_sha256(self, secret, params):
-        return base64.b64encode(hmac.new(bytes(secret, 'utf-8'), bytes(params, 'utf-8'), hashlib.sha256).digest()).decode('utf-8')
+        return base64.b64encode(
+            hmac.new(
+                bytes(secret, "utf-8"), bytes(params, "utf-8"), hashlib.sha256
+            ).digest()
+        ).decode("utf-8")
 
     def calculate_body_digest_sha256(self, body):
         if body and len(body) > 0:
-            return base64.b64encode(hashlib.sha256(json.dumps(body).encode('utf-8')).digest()).decode('utf-8')
-        return '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+            return base64.b64encode(
+                hashlib.sha256(json.dumps(body).encode("utf-8")).digest()
+            ).decode("utf-8")
+        return "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
 
     def calculate_GMT_date(self):
-        GMT_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
+        GMT_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
         # return 'Fri, 24 Jan 2025 06:50:51 GMT'
         return datetime.now(pytz.utc).strftime(GMT_FORMAT)
 
     def calculate_path(self, url):
-        return re.sub(r'^https://[^/]*', '', url)
+        return re.sub(r"^https://[^/]*", "", url)
 
     def calaulate_encrypt(self, secret_key, method, path, gmt_date, header):
-        return f'{secret_key}\n{method} {path}\ndate: {gmt_date}\n{header}\n'
-        
+        return f"{secret_key}\n{method} {path}\ndate: {gmt_date}\n{header}\n"
+
     def _generate_uuid(self) -> str:
         """Generate a UUID string without dashes."""
         return f"{uuid.uuid1().hex}{int(time.time() * 1000)}"
@@ -302,9 +320,8 @@ class HisenseApiClient:
         if not self._source_id:
             uuid_str = self._generate_uuid()
             md5_uuid = hashlib.md5(uuid_str.encode()).hexdigest()
-            self._source_id = f'td001002000{md5_uuid}'
+            self._source_id = f"td001002000{md5_uuid}"
         return self._source_id
-
 
     async def _api_request(
         self,
@@ -318,31 +335,31 @@ class HisenseApiClient:
         try:
             # Ensure token is valid
             await self.oauth_session.async_ensure_token_valid()
-            
+
             # Get system parameters
             params = await self._get_system_parameters()
             _LOGGER.debug("System parameters: %s", json.dumps(params, indent=2))
-            
+
             # Merge with provided data if any
             request_data = data if data else {}
             _LOGGER.debug("Request data: %s", request_data)
             # Add system parameters at the root level
             request_data.update(params)
-            
+
             # Log final request data
             _LOGGER.debug("Final request data: %s", json.dumps(request_data, indent=2))
-            
+
             if headers is None:
                 headers = {}
             # Add accessToken to headers only for GET requests
             if method.upper() == "GET":
-                headers.update({
-                    "accessToken": await self.oauth_session.async_get_access_token()
-                })
-            
+                headers.update(
+                    {"accessToken": await self.oauth_session.async_get_access_token()}
+                )
+
             # Build full URL
             url = f"{API_BASE_URL}{endpoint}"
-            
+
             # For GET requests, append parameters to URL
             if method.upper() == "GET":
                 # Convert parameters to URL query string
@@ -350,7 +367,7 @@ class HisenseApiClient:
                 # Create a copy of request_data and remove accessToken
                 url_params = request_data.copy()
                 url_params.pop("accessToken", None)
-                
+
                 for key, value in url_params.items():
                     if isinstance(value, (dict, list)):
                         value = json.dumps(value)
@@ -358,86 +375,89 @@ class HisenseApiClient:
                 query_string = "&".join(query_params)
                 url = f"{url}?{query_string}"
                 request_data = None  # Clear request body for GET
-            
 
             app_id = CLIENT_ID
             app_secret = CLIENT_SECRET
-            header_key = 'hi-params-encrypt'
+            header_key = "hi-params-encrypt"
             gmt_date = self.calculate_GMT_date()
             params = self.calaulate_encrypt(
                 app_id,
                 method,
                 self.calculate_path(url),
                 gmt_date,
-                f'{header_key}: {app_id}'
+                f"{header_key}: {app_id}",
             )
-            _LOGGER.debug(f'params: \n{params}')
+            _LOGGER.debug(f"params: \n{params}")
 
             sign = self.calculate_signature_sha256(
                 app_secret,
                 params,
             )
-            _LOGGER.debug(f'sign: {sign}')
+            _LOGGER.debug(f"sign: {sign}")
             # Prepare headers
-            headers.update({
-                f'{header_key}': f'{app_id}',
-                'Date': gmt_date,
-                'Authorization': f'Signature signature="{sign}", keyId="{app_id}",algorithm="hmac-sha256", headers="@request-target date {header_key}"',
-                'Content-Type': 'application/json',
-                'Digest': f'SHA-256={self.calculate_body_digest_sha256(request_data)}'
-            })
+            headers.update(
+                {
+                    f"{header_key}": f"{app_id}",
+                    "Date": gmt_date,
+                    "Authorization": f'Signature signature="{sign}", keyId="{app_id}",algorithm="hmac-sha256", headers="@request-target date {header_key}"',
+                    "Content-Type": "application/json",
+                    "Digest": f"SHA-256={self.calculate_body_digest_sha256(request_data)}",
+                }
+            )
 
             # Log request details
             _LOGGER.debug("Request details:")
             _LOGGER.debug("URL: %s", url)
             _LOGGER.debug("Method: %s", method)
-            _LOGGER.debug("Headers: %s", {
-                k: v if k.lower() != 'accessToken' else '***' 
-                for k, v in headers.items()
-            })
+            _LOGGER.debug(
+                "Headers: %s",
+                {
+                    k: v if k.lower() != "accessToken" else "***"
+                    for k, v in headers.items()
+                },
+            )
             if request_data:
                 _LOGGER.debug("Body: %s", json.dumps(request_data, indent=2))
-            
+
             # Convert request_data to JSON string for POST requests
             data = json.dumps(request_data) if request_data else None
-            
+
             async with self.session.request(
-                method, 
-                url, 
-                data=data,
-                headers=headers
+                method, url, data=data, headers=headers
             ) as resp:
                 response_text = await resp.text()
-                
+
                 # Log response details
                 _LOGGER.debug("Response details:")
                 _LOGGER.debug("Status: %d", resp.status)
                 _LOGGER.debug("Headers: %s", dict(resp.headers))
                 _LOGGER.debug("Body: %s", response_text)
-                
+
                 # if resp.status == 401:
                 #     _LOGGER.warning("Token expired, refreshing...")
                 #     await self.oauth_session.async_ensure_token_valid()
                 #     # Retry the request once
                 #     return await self._api_request(method, endpoint, data, headers)
-                    
+
                 resp.raise_for_status()
-                
+
                 try:
                     response_data = json.loads(response_text)
                 except json.JSONDecodeError as err:
                     _LOGGER.error("Failed to parse response as JSON: %s", err)
                     raise HisenseApiError(f"Invalid JSON response: {response_text}")
-                    
+
                 if not isinstance(response_data, dict):
-                    raise HisenseApiError(f"Unexpected response format: {response_data}")
-                    
+                    raise HisenseApiError(
+                        f"Unexpected response format: {response_data}"
+                    )
+
                 if response_data.get("resultCode") != 0:
                     error_msg = response_data.get("msg", "Unknown error")
                     raise HisenseApiError(f"API error: {error_msg}")
-                # _LOGGER.debug("API response: %s", json.dumps(response_data, indent=2))    
+                # _LOGGER.debug("API response: %s", json.dumps(response_data, indent=2))
                 return response_data
-                
+
         except aiohttp.ClientError as err:
             _LOGGER.error("HTTP request failed: %s", err)
             raise HisenseApiError(f"HTTP request failed: {err}")
@@ -449,14 +469,14 @@ class HisenseApiClient:
         """Generate system parameters."""
         # Get current timestamp
         timestamp = int(time.time() * 1000)
-        
+
         # Generate random string
         uuid_str = str(uuid.uuid1()) + str(timestamp)
         random_str = hashlib.md5(uuid_str.encode()).hexdigest()
-        
+
         # Get timezone
         timezone = str(self.hass.config.time_zone or "UTC")
-        
+
         params = {
             "timeStamp": str(timestamp),
             "version": "8.1",
@@ -467,12 +487,12 @@ class HisenseApiClient:
             "sourceId": self._get_source_id(),
             "platformId": 5,  # Adding platformId as required by the API
         }
-        
+
         # Add access token if available
         access_token = await self.oauth_session.async_get_access_token()
         if access_token:
             params["accessToken"] = access_token
-            
+
         return params
 
     @property
@@ -484,48 +504,76 @@ class HisenseApiClient:
             response = await self._api_request("GET", API_DEVICE_LIST)
             if not response:
                 return {}
-            
+
             devices = {}
             device_list = response.get("deviceList", [])
             _LOGGER.debug("Found %d devices in response", len(device_list))
-            
+
             for device_data in device_list:
                 deviceTypeCode = device_data.get("deviceTypeCode")
                 deviceFeatureCode = device_data.get("deviceFeatureCode")
                 deviceFeatureName = device_data.get("deviceFeatureName")
                 try:
                     device = DeviceInfo(device_data)
-                    supported_device_types = ["009", "008", "007", "006", "016", "035"]
+                    supported_device_types = [
+                        "009",
+                        "008",
+                        "007",
+                        "006",
+                        "016",
+                        "035",
+                        "013",
+                        "044",
+                        "043",
+                    ]
                     if deviceTypeCode in supported_device_types:
                         devices[device.device_id] = device
                         self._devices[device.device_id] = device
                         _LOGGER.debug(
-                            "Added supported device:\n%s",
-                            device.debug_info()
+                            "Added supported device:\n%s", device.debug_info()
                         )
 
-                        response = await self.async_get_property_list(deviceTypeCode,deviceFeatureCode)
+                        response = await self.async_get_property_list(
+                            deviceTypeCode, deviceFeatureCode
+                        )
                         if "99" in deviceFeatureCode:
                             re = await self.async_query_static_data(device.puid)
-                            _LOGGER.debug("Static data for re %s: %s", deviceFeatureCode,
-                                          re)
+                            _LOGGER.debug(
+                                "Static data for re %s: %s", deviceFeatureCode, re
+                            )
                             self.static_data[device.device_id] = re.get("status")
                         propertyList = response.get("status")
-                        _LOGGER.debug("Static data for propertyList %s: %s", deviceFeatureCode,
-                                      propertyList)
+                        _LOGGER.debug(
+                            "Static data for propertyList %s: %s",
+                            deviceFeatureCode,
+                            propertyList,
+                        )
 
                         # 使用 get_device_parser 获取 parser 类
-                        parser_class = get_device_parser(deviceTypeCode, deviceFeatureCode)
-                        _LOGGER.debug("Static data for parser class %s: %s: %s", deviceTypeCode, deviceFeatureCode,
-                                      parser_class)
+                        parser_class = get_device_parser(
+                            deviceTypeCode, deviceFeatureCode
+                        )
+                        _LOGGER.debug(
+                            "Static data for parser class %s: %s: %s",
+                            deviceTypeCode,
+                            deviceFeatureCode,
+                            parser_class,
+                        )
 
                         # 手动实例化 parser
                         parser = parser_class()
-                        _LOGGER.debug("Static data for parser instance %s: %s: %s", deviceTypeCode, deviceFeatureCode, parser)
+                        _LOGGER.debug(
+                            "Static data for parser instance %s: %s: %s",
+                            deviceTypeCode,
+                            deviceFeatureCode,
+                            parser,
+                        )
 
                         if isinstance(parser, BaseBeanParser):
-                            filtered_parser = self.create_filtered_parser(parser, propertyList)
-                            self.parsers[device.device_id] =filtered_parser
+                            filtered_parser = self.create_filtered_parser(
+                                parser, propertyList
+                            )
+                            self.parsers[device.device_id] = filtered_parser
                         elif isinstance(parser, SplitWater035699Parser):
                             if isinstance(parser, SplitWater035699Parser):
                                 # 判断有没有温区2
@@ -535,16 +583,23 @@ class HisenseApiClient:
 
                                     # 复制除了 f_zone2water_temp2 和 t_zone2water_settemp2 之外的所有字段
                                     for key, value in parser.attributes.items():
-                                        if key not in ["f_zone2water_temp2", "t_zone2water_settemp2"]:
+                                        if key not in [
+                                            "f_zone2water_temp2",
+                                            "t_zone2water_settemp2",
+                                        ]:
                                             new_parser.attributes[key] = value
                                     parser = new_parser
 
                             self.parsers[device.device_id] = parser
-                            _LOGGER.debug("三联供设备解析字段 %s:%s",
-                                          device.device_id,
-                                          self.parsers.get(device.device_id).attributes)
+                            _LOGGER.debug(
+                                "三联供设备解析字段 %s:%s",
+                                device.device_id,
+                                self.parsers.get(device.device_id).attributes,
+                            )
                         elif isinstance(parser, Humidity007Parser):
-                            filtered_parser = self.create_humidity_parser(parser, propertyList)
+                            filtered_parser = self.create_humidity_parser(
+                                parser, propertyList
+                            )
                             self.parsers[device.device_id] = filtered_parser
                         elif isinstance(parser, Split006299Parser):
                             self.parsers[device.device_id] = parser
@@ -552,46 +607,74 @@ class HisenseApiClient:
                             _LOGGER.error("Parser is not an instance of BaseBeanParser")
                             return
 
-
-                        #判断是否有电量功能
+                        # 判断是否有电量功能
                         has_power = False
-                        property_keys = {prop.get('propertyKey') for prop in propertyList if 'propertyKey' in prop}
-                        if deviceTypeCode == "009":#分体空调
+                        property_keys = {
+                            prop.get("propertyKey")
+                            for prop in propertyList
+                            if "propertyKey" in prop
+                        }
+                        if deviceTypeCode == "009":  # 分体空调
                             if "99" not in deviceFeatureCode:
                                 # _LOGGER.debug("009Ddevice feature code is :%s,and status = :%s", deviceFeatureCode,
                                 #               property_keys)
-                                target_keys = {'f_power_display', 'f_cool_qvalue', 'f_heat_qvalue'}
+                                target_keys = {
+                                    "f_power_display",
+                                    "f_cool_qvalue",
+                                    "f_heat_qvalue",
+                                }
                                 if target_keys & property_keys:
                                     has_power = True
                             else:
                                 # _LOGGER.debug("009Ddevice feature code is :%s,and static_data = :%s",deviceFeatureCode,self.static_data[device.device_id])
-                                if self.static_data[device.device_id].get("Power_function") == "1" or self.static_data.get("f_cool_or_heat_qvalue") == "1":
+                                if (
+                                    self.static_data[device.device_id].get(
+                                        "Power_function"
+                                    )
+                                    == "1"
+                                    or self.static_data.get("f_cool_or_heat_qvalue")
+                                    == "1"
+                                ):
                                     has_power = True
-                        elif deviceTypeCode in ['008','006']:#窗机 移动空调
+                        elif deviceTypeCode in ["008", "006"]:  # 窗机 移动空调
                             if "99" not in deviceFeatureCode:
                                 # _LOGGER.debug("008 006Ddevice feature code is :%s,and status = :%s", deviceFeatureCode,
                                 #               property_keys)
-                                if 'f_power_display' in property_keys:
+                                if "f_power_display" in property_keys:
                                     has_power = True
                             else:
                                 # _LOGGER.debug("008 006Ddevice feature code is :%s,and static_data = :%s",deviceFeatureCode,self.static_data[device.device_id])
-                                if self.static_data[device.device_id].get("Power_function") == "1" :
+                                if (
+                                    self.static_data[device.device_id].get(
+                                        "Power_function"
+                                    )
+                                    == "1"
+                                ):
                                     has_power = True
 
-                        elif deviceTypeCode == "007":#除湿机
+                        elif deviceTypeCode == "007":  # 除湿机
                             if "99" not in deviceFeatureCode:
                                 # _LOGGER.debug("007Ddevice feature code is :%s,and status = :%s", deviceFeatureCode,
                                 #               property_keys)
-                                if 'f_power_display' in property_keys:
+                                if "f_power_display" in property_keys:
                                     has_power = True
                             else:
                                 # _LOGGER.debug("007Ddevice feature code is :%s,and static_data = :%s",deviceFeatureCode,self.static_data[device.device_id])
-                                if self.static_data[device.device_id].get("Power_function") == "1" :
+                                if (
+                                    self.static_data[device.device_id].get(
+                                        "Power_function"
+                                    )
+                                    == "1"
+                                ):
                                     has_power = True
                         else:
                             # _LOGGER.debug("Ddevice feature code is :%s,and status = :%s", deviceFeatureCode,
                             #               property_keys)
-                            target_keys = {'f_power_display', 'f_cool_qvalue', 'f_heat_qvalue'}
+                            target_keys = {
+                                "f_power_display",
+                                "f_cool_qvalue",
+                                "f_heat_qvalue",
+                            }
                             if target_keys & property_keys:
                                 has_power = True
 
@@ -608,69 +691,99 @@ class HisenseApiClient:
 
                         if has_power:
                             current_date = datetime.now().date().isoformat()
-                            power_response = await self.async_get_hour_power(current_date, device.puid)
+                            power_response = await self.async_get_hour_power(
+                                current_date, device.puid
+                            )
                             power = power_response.get("status")
                             current_time = datetime.now()
                             previous_hour = (current_time - timedelta(hours=1)).hour
                             previous_hour_str = str(previous_hour)
                             value = power.get(previous_hour_str)
-                            _LOGGER.debug("Static data for power_response %s: %s ，当前时间：%s ，上个小时的时间：%s ，上个小时的电量：%s", deviceFeatureCode,
-                                          power_response, current_time.hour,previous_hour_str, value)
-                            _LOGGER.debug("Static data for device.status %s: %s", deviceFeatureCode,
-                                          device.status)
+                            _LOGGER.debug(
+                                "Static data for power_response %s: %s ，当前时间：%s ，上个小时的时间：%s ，上个小时的电量：%s",
+                                deviceFeatureCode,
+                                power_response,
+                                current_time.hour,
+                                previous_hour_str,
+                                value,
+                            )
+                            _LOGGER.debug(
+                                "Static data for device.status %s: %s",
+                                deviceFeatureCode,
+                                device.status,
+                            )
                             device.status["f_power_consumption"] = value
-                            _LOGGER.debug("Static data for f_power_consumption %s: %s", deviceFeatureCode,
-                                          device.status)
+                            _LOGGER.debug(
+                                "Static data for f_power_consumption %s: %s",
+                                deviceFeatureCode,
+                                device.status,
+                            )
                         else:
-                            self.parsers[device.device_id].remove_attribute("f_power_consumption")
-                        _LOGGER.debug("Static data for device.status %s: %s", deviceFeatureCode,
-                                          device.status)
-                        #填充故障列表
+                            self.parsers[device.device_id].remove_attribute(
+                                "f_power_consumption"
+                            )
+                        _LOGGER.debug(
+                            "Static data for device.status %s: %s",
+                            deviceFeatureCode,
+                            device.status,
+                        )
+                        # 填充故障列表
                         data = await self.async_api_self_check("1", device.puid)
                         failed_data = data.get("status", {}).get("selfCheckFailedList")
                         _LOGGER.debug(
                             "Static data for self_check %s: 完整自检数据 %s: 单纯故障数据 %s",
                             deviceFeatureCode,
-                            data, failed_data)
+                            data,
+                            failed_data,
+                        )
                         if failed_data:
-                            failed_list = [item.get("statusKey") for item in failed_data]
+                            failed_list = [
+                                item.get("statusKey") for item in failed_data
+                            ]
                             # self.failed_data[device.device_id] = failed_list
                             device.failed_data = failed_list
                             _LOGGER.debug(
                                 "Static data for failed_list %s: 完整自检数据 %s: 单纯故障数据 %s: 取出所有的key %s",
                                 deviceFeatureCode,
-                                data, failed_data, failed_list)
+                                data,
+                                failed_data,
+                                failed_list,
+                            )
                     else:
                         _LOGGER.warning(
-                            "Skipping unsupported device type:\n%s",
-                            device.debug_info()
+                            "Skipping unsupported device type:\n%s", device.debug_info()
                         )
                 except Exception as device_err:
                     _LOGGER.error(
-                        "Error processing device data: %s - %s",
-                        device_data,
-                        device_err
+                        "Error processing device data: %s - %s", device_data, device_err
                     )
 
             return devices
-            
+
         except Exception as err:
             _LOGGER.error("Failed to fetch devices: %s", err)
             raise UpdateFailed(f"Error communicating with API: {err}")
 
     @staticmethod
-    def create_humidity_parser(base_parser: Humidity007Parser, propertyList: list) -> Humidity007Parser:
+    def create_humidity_parser(
+        base_parser: Humidity007Parser, propertyList: list
+    ) -> Humidity007Parser:
         # 获取Humidity007Parser的attributes字典
         original_attributes = base_parser.attributes
 
         # 确保 original_attributes 是一个字典
         if not isinstance(original_attributes, dict):
-            _LOGGER.error("original_attributes is not a dictionary: %s", original_attributes)
+            _LOGGER.error(
+                "original_attributes is not a dictionary: %s", original_attributes
+            )
             return Humidity007Parser()
 
         # 提取 propertyKey 形成一个新的列表
-        property_keys = [prop.get('propertyKey') for prop in propertyList if
-                         isinstance(prop, dict) and 'propertyKey' in prop]
+        property_keys = [
+            prop.get("propertyKey")
+            for prop in propertyList
+            if isinstance(prop, dict) and "propertyKey" in prop
+        ]
 
         # 调试 property_keys 的内容
         _LOGGER.debug("property_keys content: %s", property_keys)
@@ -681,7 +794,9 @@ class HisenseApiClient:
             return Humidity007Parser()
 
         # 确保 property_keys 中的元素是可哈希的类型
-        if any(not isinstance(item, (str, int, float, tuple)) for item in property_keys):
+        if any(
+            not isinstance(item, (str, int, float, tuple)) for item in property_keys
+        ):
             _LOGGER.error("property_keys contains unhashable types: %s", property_keys)
             return Humidity007Parser()
 
@@ -692,8 +807,8 @@ class HisenseApiClient:
                 attribute = original_attributes[key]
                 # 更新 value_range
                 for prop in propertyList:
-                    if prop.get('propertyKey') == key:
-                        property_value_list = prop.get('propertyValueList')
+                    if prop.get("propertyKey") == key:
+                        property_value_list = prop.get("propertyValueList")
                         if property_value_list:
                             attribute.value_range = property_value_list
                             break
@@ -701,14 +816,16 @@ class HisenseApiClient:
                 # 过滤 value_map
                 if attribute.value_map:
                     # 将 property_value_list_keys 转换为集合
-                    property_value_list_keys = set(property_value_list.split(','))
+                    property_value_list_keys = set(property_value_list.split(","))
 
                     # 确保 value_map_keys 是一个集合
                     value_map_keys = set(attribute.value_map.keys())
 
                     # 使用 intersection 方法计算交集
-                    filtered_value_map = {k: attribute.value_map[k] for k in
-                                          value_map_keys.intersection(property_value_list_keys)}
+                    filtered_value_map = {
+                        k: attribute.value_map[k]
+                        for k in value_map_keys.intersection(property_value_list_keys)
+                    }
                     attribute.value_map = filtered_value_map
 
                 filtered_attributes[key] = attribute
@@ -716,26 +833,35 @@ class HisenseApiClient:
         _LOGGER.debug("除湿机filtered_attributes content: %s", filtered_attributes)
         # 创建一个新的Humidity007Parser对象，并将filtered_attributes赋值给它的attributes属性
         new_parser = Humidity007Parser()
-        _LOGGER.debug("除湿机Static data for filtered_parser111111 %s",
-                      new_parser.attributes)
+        _LOGGER.debug(
+            "除湿机Static data for filtered_parser111111 %s", new_parser.attributes
+        )
         new_parser._attributes = filtered_attributes
-        _LOGGER.debug("除湿机Static data for filtered_parser222222 %s",
-                      new_parser.attributes)
+        _LOGGER.debug(
+            "除湿机Static data for filtered_parser222222 %s", new_parser.attributes
+        )
         return new_parser
 
     @staticmethod
-    def create_filtered_parser(base_parser: BaseDeviceParser, propertyList: list) -> BaseBeanParser:
+    def create_filtered_parser(
+        base_parser: BaseDeviceParser, propertyList: list
+    ) -> BaseBeanParser:
         # 获取BaseBeanParser的attributes字典
         original_attributes = base_parser.attributes
 
         # 确保 original_attributes 是一个字典
         if not isinstance(original_attributes, dict):
-            _LOGGER.error("original_attributes is not a dictionary: %s", original_attributes)
+            _LOGGER.error(
+                "original_attributes is not a dictionary: %s", original_attributes
+            )
             return BaseBeanParser()
 
         # 提取 propertyKey 形成一个新的列表
-        property_keys = [prop.get('propertyKey') for prop in propertyList if
-                         isinstance(prop, dict) and 'propertyKey' in prop]
+        property_keys = [
+            prop.get("propertyKey")
+            for prop in propertyList
+            if isinstance(prop, dict) and "propertyKey" in prop
+        ]
 
         # 调试 property_keys 的内容
         _LOGGER.debug("property_keys content: %s", property_keys)
@@ -746,7 +872,9 @@ class HisenseApiClient:
             return BaseBeanParser()
 
         # 确保 property_keys 中的元素是可哈希的类型
-        if any(not isinstance(item, (str, int, float, tuple)) for item in property_keys):
+        if any(
+            not isinstance(item, (str, int, float, tuple)) for item in property_keys
+        ):
             _LOGGER.error("property_keys contains unhashable types: %s", property_keys)
             return BaseBeanParser()
 
@@ -757,8 +885,8 @@ class HisenseApiClient:
                 attribute = original_attributes[key]
                 # 更新 value_range
                 for prop in propertyList:
-                    if prop.get('propertyKey') == key:
-                        property_value_list = prop.get('propertyValueList')
+                    if prop.get("propertyKey") == key:
+                        property_value_list = prop.get("propertyValueList")
                         if property_value_list:
                             attribute.value_range = property_value_list
                             break
@@ -766,14 +894,16 @@ class HisenseApiClient:
                 # 过滤 value_map
                 if attribute.value_map:
                     # 将 property_value_list_keys 转换为集合
-                    property_value_list_keys = set(property_value_list.split(','))
+                    property_value_list_keys = set(property_value_list.split(","))
 
                     # 确保 value_map_keys 是一个集合
                     value_map_keys = set(attribute.value_map.keys())
 
                     # 使用 intersection 方法计算交集
-                    filtered_value_map = {k: attribute.value_map[k] for k in
-                                          value_map_keys.intersection(property_value_list_keys)}
+                    filtered_value_map = {
+                        k: attribute.value_map[k]
+                        for k in value_map_keys.intersection(property_value_list_keys)
+                    }
                     attribute.value_map = filtered_value_map
 
                 filtered_attributes[key] = attribute
@@ -792,8 +922,7 @@ class HisenseApiClient:
         _LOGGER.debug("filtered_attributes content: %s", filtered_attributes)
         # 创建一个新的BaseBeanParser对象，并将filtered_attributes赋值给它的attributes属性
         new_parser = BaseBeanParser()
-        _LOGGER.debug("Static data for filtered_parserqqqqqq %s",
-                      new_parser.attributes)
+        _LOGGER.debug("Static data for filtered_parserqqqqqq %s", new_parser.attributes)
         new_parser._attributes = filtered_attributes
 
         return new_parser
@@ -831,7 +960,9 @@ class HisenseApiClient:
         """Parse device status based on device type."""
         _LOGGER.debug(
             "Parsing status for device %s (type: %s-%s)",
-            device.name, device.type_code, device.feature_code
+            device.name,
+            device.type_code,
+            device.feature_code,
         )
         try:
             parser = self.parsers.get(device.device_id)
@@ -841,7 +972,7 @@ class HisenseApiClient:
                 device.name,
                 device.type_code,
                 device.feature_code,
-                parsed_status
+                parsed_status,
             )
             return parsed_status
         except ValueError as err:
@@ -850,7 +981,7 @@ class HisenseApiClient:
                 device.name,
                 device.type_code,
                 device.feature_code,
-                err
+                err,
             )
             return {}
 
@@ -863,7 +994,7 @@ class HisenseApiClient:
             device = devices.get(device_id)
             if not device:
                 raise HisenseApiError(f"Device not found: {device_id}")
-        
+
         return self._parse_device_status(device)
 
     async def async_control_device(
@@ -889,7 +1020,7 @@ class HisenseApiClient:
                 "puid": puid,
                 "properties": properties,
             }
-            
+
             response = await self._api_request(
                 "POST",
                 API_DEVICE_CONTROL,
@@ -903,18 +1034,13 @@ class HisenseApiClient:
             else:
                 error_msg = response.get("msg", "Unknown error")
                 raise HisenseApiError(f"Control failed: {error_msg}")
-                
+
         except Exception as err:
             raise HisenseApiError(f"Failed to control device: {err}") from err
 
-    async def async_query_static_data(
-            self,
-            puid: str
-    ) -> dict[str, Any]:
+    async def async_query_static_data(self, puid: str) -> dict[str, Any]:
         try:
-            params = {
-                "puid": puid
-            }
+            params = {"puid": puid}
 
             response = await self._api_request(
                 "POST",
@@ -935,9 +1061,9 @@ class HisenseApiClient:
             raise HisenseApiError(f"Failed to control device: {err}") from err
 
     async def async_get_property_list(
-            self,
-            deviceTypeCode: str,
-            deviceFeatureCode: str,
+        self,
+        deviceTypeCode: str,
+        deviceFeatureCode: str,
     ) -> dict[str, Any]:
         try:
             params = {
@@ -964,9 +1090,9 @@ class HisenseApiClient:
             raise HisenseApiError(f"Failed to control device: {err}") from err
 
     async def async_get_hour_power(
-            self,
-            date: str,
-            puid: str,
+        self,
+        date: str,
+        puid: str,
     ) -> dict[str, Any]:
         try:
             params = {
@@ -993,9 +1119,9 @@ class HisenseApiClient:
             raise HisenseApiError(f"Failed to control device: {err}") from err
 
     async def async_api_self_check(
-            self,
-            noRecord: str,
-            puid: str,
+        self,
+        noRecord: str,
+        puid: str,
     ) -> dict[str, Any]:
         try:
             params = {

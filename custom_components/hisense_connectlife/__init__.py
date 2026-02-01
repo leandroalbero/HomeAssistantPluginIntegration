@@ -58,13 +58,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Hisense AC Plugin from a config entry."""
     _LOGGER.debug("Setting up config entry: %s", entry.title)
 
-    # Get or create OAuth2 implementation
-    # For manual auth flow, we create our own implementation
+    # Create OAuth2 implementation
     implementation = HisenseOAuth2Implementation(hass)
-
-    # Register implementation if not already registered
-    if implementation not in OAuth2FlowHandler._implementations.get(DOMAIN, []):
-        OAuth2FlowHandler.async_register_implementation(hass, implementation)
 
     # Create Home Assistant's OAuth2Session for token management
     ha_session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)

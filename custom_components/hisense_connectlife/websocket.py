@@ -14,6 +14,7 @@ from .models import ApiClientProtocol, NotificationInfo
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class HisenseWebSocket:
     """WebSocket client for Hisense AC."""
 
@@ -50,18 +51,20 @@ class HisenseWebSocket:
         _LOGGER.debug("Registering phone code: %s", phone_code)
         try:
             response = await self.api_client._api_request(
-                "POST",
-                "/msg/registerPhoneDevice",
-                data={"phoneCode": phone_code}
+                "POST", "/msg/registerPhoneDevice", data={"phoneCode": phone_code}
             )
             success = response.get("resultCode") == 0
-            _LOGGER.debug("Phone code registration %s", "successful" if success else "failed")
+            _LOGGER.debug(
+                "Phone code registration %s", "successful" if success else "failed"
+            )
             return success
         except Exception as err:
             _LOGGER.error("Failed to register phone code: %s", err)
             return False
 
-    async def _get_notification_info(self, phone_code: str) -> Optional[NotificationInfo]:
+    async def _get_notification_info(
+        self, phone_code: str
+    ) -> Optional[NotificationInfo]:
         """Get notification server information."""
         _LOGGER.debug("Fetching notification info for phone code: %s", phone_code)
         try:
@@ -72,13 +75,15 @@ class HisenseWebSocket:
                     "pageNo": "1",
                     "pageSize": "10",
                     "phoneCode": phone_code,
-                    "queryType": 2
-                }
+                    "queryType": 2,
+                },
             )
             notification_info = NotificationInfo.from_json(response)
-            _LOGGER.debug("Received notification info - Server: %s:%s", 
-                         notification_info.push_server_ip if notification_info else "N/A",
-                         notification_info.push_server_ssl_port if notification_info else "N/A")
+            _LOGGER.debug(
+                "Received notification info - Server: %s:%s",
+                notification_info.push_server_ip if notification_info else "N/A",
+                notification_info.push_server_ssl_port if notification_info else "N/A",
+            )
             return notification_info
         except Exception as err:
             _LOGGER.error("Failed to get notification info: %s", err)
@@ -90,8 +95,11 @@ class HisenseWebSocket:
             _LOGGER.error("Missing notification info or phone code")
             return
 
-        channel = (self._notification_info.push_channels[0].push_channel
-                  if self._notification_info.push_channels else "")
+        channel = (
+            self._notification_info.push_channels[0].push_channel
+            if self._notification_info.push_channels
+            else ""
+        )
         if not channel:
             _LOGGER.error("No push channel available")
             return
@@ -110,9 +118,7 @@ class HisenseWebSocket:
             _LOGGER.debug("WebSocket URL: %s", ws_url)
 
             self._ws = await self.session.ws_connect(
-                ws_url,
-                heartbeat=self._ping_interval,
-                ssl=True
+                ws_url, heartbeat=self._ping_interval, ssl=True
             )
             _LOGGER.info("WebSocket connection established")
             self._fail_count = 0
@@ -132,7 +138,9 @@ class HisenseWebSocket:
 
             if not self._closing:
                 # Refresh connection info before retry
-                self._notification_info = await self._get_notification_info(self._phone_code)
+                self._notification_info = await self._get_notification_info(
+                    self._phone_code
+                )
                 if self._notification_info:
                     await self._connect_ws()
 
@@ -155,9 +163,12 @@ class HisenseWebSocket:
                     try:
                         # Decode base64 and then UTF-8
                         base64_decoded = base64.b64decode(msg.data)
-                        decoded_content = base64_decoded.decode('utf-8')
+                        # Use 'replace' error handler to handle invalid UTF-8 sequences
+                        decoded_content = base64_decoded.decode(
+                            "utf-8", errors="replace"
+                        )
                         _LOGGER.debug("Decoded message content: %s", decoded_content)
-                        
+
                         data = json.loads(decoded_content)
                         self.message_callback(data)
                     except base64.binascii.Error as err:
@@ -186,7 +197,9 @@ class HisenseWebSocket:
             # Add delay before reconnection attempt
             await asyncio.sleep(5)
             # Refresh connection info
-            self._notification_info = await self._get_notification_info(self._phone_code)
+            self._notification_info = await self._get_notification_info(
+                self._phone_code
+            )
             if self._notification_info:
                 await self._connect_ws()
         except Exception as err:
@@ -205,7 +218,9 @@ class HisenseWebSocket:
                 return
 
             # Step 3: Get notification info
-            self._notification_info = await self._get_notification_info(self._phone_code)
+            self._notification_info = await self._get_notification_info(
+                self._phone_code
+            )
             if not self._notification_info:
                 _LOGGER.error("Failed to get notification info")
                 return

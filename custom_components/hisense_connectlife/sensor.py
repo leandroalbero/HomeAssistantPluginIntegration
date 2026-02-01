@@ -711,9 +711,9 @@ SENSOR_TYPES = {
         "unit": None,
         "description": "Water tank level status",
     },
-    # Heat Pump (044) - Room Temperatures
-    "c1R1T": {
-        "key": "c1R1T",
+    # Heat Pump (044) - Room Temperatures (using Trc keys which have actual values)
+    "Trc1R1": {
+        "key": "Trc1R1",
         "name": "Zone 1 Room 1 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -721,8 +721,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 1 Room 1 current temperature",
     },
-    "c1R2T": {
-        "key": "c1R2T",
+    "Trc1R2": {
+        "key": "Trc1R2",
         "name": "Zone 1 Room 2 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -730,8 +730,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 1 Room 2 current temperature",
     },
-    "c1R3T": {
-        "key": "c1R3T",
+    "Trc1R3": {
+        "key": "Trc1R3",
         "name": "Zone 1 Room 3 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -739,8 +739,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 1 Room 3 current temperature",
     },
-    "c1R4T": {
-        "key": "c1R4T",
+    "Trc1R4": {
+        "key": "Trc1R4",
         "name": "Zone 1 Room 4 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -748,8 +748,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 1 Room 4 current temperature",
     },
-    "c2R1T": {
-        "key": "c2R1T",
+    "Trc2R1": {
+        "key": "Trc2R1",
         "name": "Zone 2 Room 1 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -757,8 +757,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 2 Room 1 current temperature",
     },
-    "c2R2T": {
-        "key": "c2R2T",
+    "Trc2R2": {
+        "key": "Trc2R2",
         "name": "Zone 2 Room 2 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -766,8 +766,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 2 Room 2 current temperature",
     },
-    "c2R3T": {
-        "key": "c2R3T",
+    "Trc2R3": {
+        "key": "Trc2R3",
         "name": "Zone 2 Room 3 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,
@@ -775,8 +775,8 @@ SENSOR_TYPES = {
         "unit": UnitOfTemperature.CELSIUS,
         "description": "Zone 2 Room 3 current temperature",
     },
-    "c2R4T": {
-        "key": "c2R4T",
+    "Trc2R4": {
+        "key": "Trc2R4",
         "name": "Zone 2 Room 4 Temperature",
         "icon": "mdi:thermometer",
         "device_class": SensorDeviceClass.TEMPERATURE,

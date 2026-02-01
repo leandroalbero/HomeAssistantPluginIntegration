@@ -4,16 +4,16 @@
         "step": {
             "user": {
                 "title": "Connect to Hisense AC",
-                "description": "You are about to connect your Hisense AC ({app_name}) to Home Assistant.\n\nApplication ID: {app_id}\n\nExpected callback URL:\n{oauth_callback_url}\n\nChoose your authentication method:",
+                "description": "Choose your authentication method:\n\n• Manual: Copy/paste callback URL (works with any HA URL)\n• Automatic: Requires homeassistant.local to resolve\n\nApplication ID: {app_id}",
                 "data": {
                     "auth_method": "Authentication method"
                 }
             },
             "manual_auth": {
-                "title": "Manual Authentication",
-                "description": "1. Open this URL in your browser:\n\n{auth_url}\n\n2. Log in with your Hisense ConnectLife credentials\n3. After login, copy the FULL callback URL from your browser\n4. Paste it below",
+                "title": "Manual Authentication - Step 1/2",
+                "description": "Step 1: Open this URL in your browser:\n{auth_url}\n\nStep 2: Log in with your Hisense ConnectLife credentials\n\nStep 3: After login, copy the FULL callback URL from your browser address bar\n\nStep 4: Paste the callback URL below and click Submit",
                 "data": {
-                    "callback_url": "Callback URL"
+                    "callback_url": "Paste callback URL here"
                 }
             }
         },
@@ -46,6 +46,10 @@
         "error": {
             "refresh_failed": "Failed to refresh device list",
             "token_refresh_failed": "Failed to refresh token"
+        },
+        "success": {
+            "device_list_refreshed": "Device list has been refreshed",
+            "token_refreshed": "Token has been refreshed"
         }
     }
 }

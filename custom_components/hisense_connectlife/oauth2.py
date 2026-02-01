@@ -22,15 +22,13 @@ OAUTH2_CALLBACK_URL = "http://homeassistant.local:8123/auth/external/callback"
 def get_redirect_url(hass: HomeAssistant) -> str:
     """Get the redirect URL for OAuth2.
 
-    Uses Home Assistant's URL detection to get the actual URL
-    that Home Assistant is accessible at.
+    IMPORTANT: This must be homeassistant.local because that's what
+    Hisense registered in their OAuth2 client. The redirect will go
+    to this URL, and the user can copy the callback URL from their
+    browser to complete authentication.
     """
-    try:
-        url = get_url(hass, allow_ip=True, prefer_external=False)
-        return f"{url}/auth/external/callback"
-    except Exception:
-        # Fallback to the hardcoded URL if get_url fails
-        return OAUTH2_CALLBACK_URL
+    # Always use the hardcoded URL that Hisense expects
+    return OAUTH2_CALLBACK_URL
 
 
 class OAuth2Session:

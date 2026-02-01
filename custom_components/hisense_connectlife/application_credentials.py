@@ -8,16 +8,22 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import CLIENT_ID, CLIENT_SECRET, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
-from .oauth2 import OAUTH2_CALLBACK_URL
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_get_auth_implementation(
-    hass: HomeAssistant, auth_domain: str, credential: dict
-) -> config_entry_oauth2_flow.LocalOAuth2Implementation:
-    """Return auth implementation for a credential."""
-    return HisenseOAuth2Implementation(hass)
+class HisenseApplicationCredentials:
+    """Application Credentials implementation for Hisense AC Plugin."""
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        """Initialize Application Credentials."""
+        self.hass = hass
+
+    async def async_get_auth_implementation(
+        self, hass: HomeAssistant, auth_domain: str, credential: dict
+    ) -> config_entry_oauth2_flow.LocalOAuth2Implementation:
+        """Return auth implementation for a credential."""
+        return HisenseOAuth2Implementation(hass)
 
 
 class HisenseOAuth2Implementation(config_entry_oauth2_flow.LocalOAuth2Implementation):
@@ -42,4 +48,4 @@ class HisenseOAuth2Implementation(config_entry_oauth2_flow.LocalOAuth2Implementa
     @property
     def redirect_uri(self) -> str:
         """Return the redirect URI."""
-        return OAUTH2_CALLBACK_URL
+        return "http://homeassistant.local:8123/auth/external/callback"

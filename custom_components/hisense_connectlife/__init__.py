@@ -1,5 +1,4 @@
 """The Hisense AC Plugin integration."""
-
 from __future__ import annotations
 
 import logging
@@ -26,15 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 # This integration can only be configured via config entry
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-PLATFORMS: list[Platform] = [
-    Platform.CLIMATE,
-    Platform.SWITCH,
-    Platform.WATER_HEATER,
-    Platform.NUMBER,
-    Platform.SENSOR,
-    Platform.HUMIDIFIER,
-]
-
+PLATFORMS: list[Platform] = [Platform.CLIMATE, Platform.SWITCH, Platform.WATER_HEATER, Platform.NUMBER, Platform.SENSOR, Platform.HUMIDIFIER]
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Hisense AC Plugin component."""
@@ -45,41 +36,38 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     implementation = HisenseOAuth2Implementation(
         hass,
     )
-
+    
     OAuth2FlowHandler.async_register_implementation(
         hass,
         implementation,
     )
-
+    
     return True
-
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Hisense AC Plugin from a config entry."""
     _LOGGER.debug("Setting up config entry: %s", entry.title)
 
-    # Create OAuth2 implementation
-    implementation = HisenseOAuth2Implementation(hass)
-
+    implementation = await config_entry_oauth2_flow.async_get_config_entry_implementation(
+        hass, entry
+    )
+    
     # Create Home Assistant's OAuth2Session for token management
     ha_session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
-
+    
     # Get the token data and add expiration time
     token_info = await ha_session.async_ensure_token_valid()
     if token_info is None:
         token_info = entry.data.get("token", {})
-
+    
     if "expires_in" in token_info and "expires_at" not in token_info:
         token_info["expires_at"] = time.time() + token_info["expires_in"]
-
-    _LOGGER.debug(
-        "Token info: %s",
-        {
-            k: "***" if k in ("access_token", "refresh_token") else v
-            for k, v in token_info.items()
-        },
-    )
-
+    
+    _LOGGER.debug("Token info: %s", {
+        k: '***' if k in ('access_token', 'refresh_token') else v 
+        for k, v in token_info.items()
+    })
+    
     # Create our custom OAuth2Session that wraps the HA session
     oauth_session = OAuth2Session(
         hass=hass,
@@ -92,7 +80,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Create update coordinator
     coordinator = HisenseACPluginDataUpdateCoordinator(hass, api_client, entry)
-
+    
     # Initialize coordinator and get initial device list
     if not await coordinator.async_setup():
         _LOGGER.error("Failed to setup coordinator")
@@ -104,7 +92,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
-
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""

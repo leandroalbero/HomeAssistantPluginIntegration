@@ -499,43 +499,58 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        _LOGGER.info(
-            "设备 %s 是否可用: %s", self.feature_code, self._device.is_onOff
-        )  # 调用方法并获取返回值
-        if not self._device or not self._device.is_online or not self._device.is_onOff:
+        # 基础可用性检查（设备在线）
+        if not self._device or not self._device.is_online:
             return False
 
-        # Check if the switch should be hidden based on the current mode
-        current_mode = self._device.get_status_value(StatusKey.MODE)
-        if self._switch_type == "rapid_mode":
-            if current_mode in [
-                "0",
-                "4",
-                "3",
-            ]:  # Assuming "0" is AUTO, "1" is FAN, and "3" is DEHUMIDIFY
+        # 获取设备类型代码
+        device_type = getattr(self._device, "type_code", None)
+
+        # AC设备 (009, 008, 006) 和除湿机 (007) 使用电源和模式检查
+        if device_type in ["009", "008", "006", "007"]:
+            _LOGGER.info(
+                "设备 %s 是否可用: %s", self.feature_code, self._device.is_onOff
+            )  # 调用方法并获取返回值
+            if not self._device.is_onOff:
                 return False
-        elif self._switch_type == "quiet_mode":
-            if current_mode in ["4", "3"]:  # Assuming "0" is AUTO and "1" is FAN
-                return False
-        elif self._switch_type == "8heat_mode":
-            if current_mode not in ["1"]:
-                return False
-        elif self._switch_type == "eco_mode":
-            # 新增feature_code判断逻辑
-            if self.device.feature_code == "199":
-                if current_mode in ["4", "0"]:  # 特殊处理feature_code=199时的mode检查
+
+            # Check if the switch should be hidden based on the current mode
+            current_mode = self._device.get_status_value(StatusKey.MODE)
+            if self._switch_type == "rapid_mode":
+                if current_mode in [
+                    "0",
+                    "4",
+                    "3",
+                ]:  # Assuming "0" is AUTO, "1" is FAN, and "3" is DEHUMIDIFY
                     return False
-            else:
-                if current_mode in ["4"]:  # 其他设备保持原逻辑
+            elif self._switch_type == "quiet_mode":
+                if current_mode in ["4", "3"]:  # Assuming "0" is AUTO and "1" is FAN
                     return False
-        elif self.device.type_code == "007" and self._switch_type.startswith(
-            "fan_speed_"
-        ):
-            if current_mode in ["2"]:
-                return False
-            # 新增逻辑：除湿机开启时风速开关不可选中
-            if self.is_on:
-                return False
+            elif self._switch_type == "8heat_mode":
+                if current_mode not in ["1"]:
+                    return False
+            elif self._switch_type == "eco_mode":
+                # 新增feature_code判断逻辑
+                if self.device.feature_code == "199":
+                    if current_mode in [
+                        "4",
+                        "0",
+                    ]:  # 特殊处理feature_code=199时的mode检查
+                        return False
+                else:
+                    if current_mode in ["4"]:  # 其他设备保持原逻辑
+                        return False
+            elif self.device.type_code == "007" and self._switch_type.startswith(
+                "fan_speed_"
+            ):
+                if current_mode in ["2"]:
+                    return False
+                # 新增逻辑：除湿机开启时风速开关不可选中
+                if self.is_on:
+                    return False
+
+        # 对于其他设备类型 (013-Oven, 044-Heat Pump, 043-Hub)，只要在线就可用
+        # 它们使用不同的状态属性
 
         return True
 

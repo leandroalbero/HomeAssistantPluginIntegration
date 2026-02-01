@@ -462,22 +462,31 @@ class HisenseNumber(CoordinatorEntity, NumberEntity):
         # 基础可用性检查（设备在线）
         if not self._device or not self._device.is_online:
             return False
-        # 新增：设备关机状态下不可用
-        power_status = self._device.get_status_value("t_power")
-        if power_status != "1":
-            _LOGGER.debug("设备已关机，实体不可用")
-            return False
-        current_mode = self._device.get_status_value("t_work_mode")
-        # 判断自动模式
-        if current_mode in ["15", "3", "16"]:
-            _LOGGER.debug("设备处于自动模式，温度控制不可用")
-            return False
 
-        # 判断温区2在制冷或制冷+生活热水模式下是否禁用
-        if self._number_type == "t_zone2water_settemp2":
-            if current_mode in ["1", "5"]:  # 对应制冷和制冷+生活热水模式
-                _LOGGER.debug("当前模式 %s 禁用温区2控制", current_mode)
+        # 获取设备类型代码
+        device_type = getattr(self._device, "type_code", None)
+
+        # AC设备 (009, 008, 006) 使用电源和模式检查
+        if device_type in ["009", "008", "006"]:
+            # 新增：设备关机状态下不可用
+            power_status = self._device.get_status_value("t_power")
+            if power_status != "1":
+                _LOGGER.debug("设备已关机，实体不可用")
                 return False
+            current_mode = self._device.get_status_value("t_work_mode")
+            # 判断自动模式
+            if current_mode in ["15", "3", "16"]:
+                _LOGGER.debug("设备处于自动模式，温度控制不可用")
+                return False
+
+            # 判断温区2在制冷或制冷+生活热水模式下是否禁用
+            if self._number_type == "t_zone2water_settemp2":
+                if current_mode in ["1", "5"]:  # 对应制冷和制冷+生活热水模式
+                    _LOGGER.debug("当前模式 %s 禁用温区2控制", current_mode)
+                    return False
+
+        # 对于其他设备类型 (013-Oven, 044-Heat Pump, 043-Hub)，只要在线就可用
+        # 它们使用不同的状态属性
 
         return True
 

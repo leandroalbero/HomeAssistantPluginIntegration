@@ -1061,15 +1061,23 @@ class HisenseSensor(CoordinatorEntity, SensorEntity):
         """Return if entity is available."""
         if not super().available:  # 继承父类的可用性检查（设备在线）
             return False
-        current_mode = self._device.get_status_value(StatusKey.MODE)  # 使用正确键名
-        # 判断自动模式
-        if current_mode in ["3"]:
-            _LOGGER.debug("设备处于自动模式，温度控制不可用")
-            return False
-        if self._sensor_type == "f_zone2water_temp2":
-            allowed_modes = {"0", "6"}  # 仅允许制热和制热+制热水模式
-            if current_mode not in allowed_modes:
+
+        # 获取设备类型代码
+        device_type = getattr(self._device, "type_code", None)
+
+        # AC设备 (009, 008, 006) 和除湿机 (007) 使用模式检查
+        if device_type in ["009", "008", "006", "007"]:
+            current_mode = self._device.get_status_value(StatusKey.MODE)  # 使用正确键名
+            # 判断自动模式
+            if current_mode in ["3"]:
+                _LOGGER.debug("设备处于自动模式，温度控制不可用")
                 return False
+            if self._sensor_type == "f_zone2water_temp2":
+                allowed_modes = {"0", "6"}  # 仅允许制热和制热+制热水模式
+                if current_mode not in allowed_modes:
+                    return False
+
+        # 对于其他设备类型 (013-Oven, 044-Heat Pump, 043-Hub)，只要在线就可用
 
         return True
 

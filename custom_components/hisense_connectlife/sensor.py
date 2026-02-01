@@ -1096,7 +1096,16 @@ class HisenseSensor(CoordinatorEntity, SensorEntity):
                 SensorDeviceClass.TEMPERATURE,
                 SensorDeviceClass.ENERGY,
             ]:
-                return float(value)
+                float_value = float(value)
+
+                # For Oven (013) and Heat Pump (044) devices, filter out 0 values
+                # which typically indicate unconfigured zones or inactive features
+                device_type = getattr(self._device, "type_code", None)
+                if device_type in ["013", "044", "043"]:
+                    if float_value == 0.0:
+                        return None
+
+                return float_value
             return value
         except (ValueError, TypeError):
             _LOGGER.warning(

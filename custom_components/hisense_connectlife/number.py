@@ -502,7 +502,22 @@ class HisenseNumber(CoordinatorEntity, NumberEntity):
             return None
 
         try:
-            return float(value)
+            float_value = float(value)
+
+            # For Oven (013) and Heat Pump (044) devices, filter out invalid/unset values
+            device_type = getattr(device, "type_code", None)
+            if device_type == "013":
+                # Oven: 255 is often used as "not set" for temperatures
+                # 16777215 (0xFFFFFF) is used for "no time set"
+                # 65535 (0xFFFF) is used for "not configured"
+                if float_value in [255.0, 16777215.0, 65535.0]:
+                    return None
+            elif device_type in ["044", "043"]:
+                # Heat Pump/Hub: 0 often means zone/feature not configured
+                if float_value == 0.0:
+                    return None
+
+            return float_value
         except (ValueError, TypeError):
             return None
 

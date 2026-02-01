@@ -163,7 +163,8 @@ class DeviceInfo:
 
     def is_supported(self) -> bool:
         """Check if this device type is supported."""
-        supported_device_types = ["009", "008", "006"]
+        # All device types that should create entities in Home Assistant
+        supported_device_types = ["009", "008", "006", "013", "044", "043"]
         return self.type_code in supported_device_types
 
     def is_devices(self) -> bool:

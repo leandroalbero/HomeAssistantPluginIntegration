@@ -11,9 +11,9 @@
             },
             "manual_auth": {
                 "title": "Manual Authentication - Step 1/2",
-                "description": "Step 1: Open this URL in your browser:\n{auth_url}\n\nStep 2: Log in with your Hisense ConnectLife credentials\n\nStep 3: After login, copy the FULL callback URL from your browser address bar\n\nStep 4: Paste the callback URL below and click Submit",
+                "description": "**IMPORTANT: Open this URL in your browser (copy & paste it):**\n\n{auth_url}\n\n**Then:**\n1. Log in with your Hisense ConnectLife credentials\n2. After login, copy the FULL callback URL from your browser address bar (it will start with http://homeassistant.local...)\n3. Paste that callback URL below and click Submit",
                 "data": {
-                    "callback_url": "Paste callback URL here"
+                    "callback_url": "Paste the callback URL from your browser here"
                 }
             }
         },

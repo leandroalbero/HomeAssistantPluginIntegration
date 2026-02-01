@@ -43,6 +43,9 @@ from .devices import (
     SplitWater035699Parser,
     Humidity007Parser,
     Split006299Parser,
+    Oven013Parser,
+    HeatPump044Parser,
+    HubController043Parser,
 )
 from .models import DeviceInfo, HisenseApiError
 
@@ -602,6 +605,12 @@ class HisenseApiClient:
                             )
                             self.parsers[device.device_id] = filtered_parser
                         elif isinstance(parser, Split006299Parser):
+                            self.parsers[device.device_id] = parser
+                        elif isinstance(
+                            parser,
+                            (Oven013Parser, HeatPump044Parser, HubController043Parser),
+                        ):
+                            # New device types - assign parser directly
                             self.parsers[device.device_id] = parser
                         else:
                             _LOGGER.error("Parser is not an instance of BaseBeanParser")

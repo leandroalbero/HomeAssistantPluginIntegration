@@ -196,7 +196,7 @@ class OAuth2FlowHandler(
             if not callback_url:
                 errors["callback_url"] = "required"
             else:
-                # Parse the callback URL to extract code and state
+                # Parse the callback URL to extract code
                 try:
                     parsed = urllib.parse.urlparse(callback_url)
                     params = urllib.parse.parse_qs(parsed.query)
@@ -205,7 +205,6 @@ class OAuth2FlowHandler(
                         errors["callback_url"] = "no_code"
                     else:
                         auth_code = params["code"][0]
-                        state = params.get("state", [None])[0]
 
                         _LOGGER.debug("Extracted auth code: %s...", auth_code[:10])
 
@@ -213,26 +212,63 @@ class OAuth2FlowHandler(
                         self._flow_impl = HisenseOAuth2Implementation(self.hass)
                         self.flow_impl = self._flow_impl
 
-                        # Exchange code for token
+                        # Exchange code for token directly
                         try:
-                            token = await self._flow_impl.async_resolve_external_data(
-                                {
-                                    "code": auth_code,
-                                    "state": state,
-                                }
-                            )
+                            import aiohttp
+                            from .const import OAUTH2_TOKEN, CLIENT_ID, CLIENT_SECRET
 
-                            _LOGGER.debug("Successfully obtained token")
+                            token_data = {
+                                "grant_type": "authorization_code",
+                                "client_id": CLIENT_ID,
+                                "client_secret": CLIENT_SECRET,
+                                "code": auth_code,
+                                "redirect_uri": OAUTH2_CALLBACK_URL,
+                            }
 
-                            # Create the config entry
-                            return self.async_create_entry(
-                                title=self._flow_impl.name,
-                                data={
-                                    "token": token,
-                                    "auth_implementation": DOMAIN,
-                                    "implementation": DOMAIN,
-                                },
-                            )
+                            _LOGGER.debug("Exchanging code for token...")
+
+                            async with aiohttp.ClientSession() as session:
+                                async with session.post(
+                                    OAUTH2_TOKEN,
+                                    data=token_data,
+                                    headers={
+                                        "Content-Type": "application/x-www-form-urlencoded"
+                                    },
+                                ) as resp:
+                                    if resp.status != 200:
+                                        text = await resp.text()
+                                        _LOGGER.error(
+                                            "Token request failed: %s - %s",
+                                            resp.status,
+                                            text,
+                                        )
+                                        errors["callback_url"] = "token_exchange_failed"
+                                    else:
+                                        token = await resp.json()
+
+                                        # Check for OAuth errors
+                                        if "error" in token:
+                                            _LOGGER.error(
+                                                "OAuth error: %s",
+                                                token.get(
+                                                    "error_description", token["error"]
+                                                ),
+                                            )
+                                            errors["callback_url"] = (
+                                                "token_exchange_failed"
+                                            )
+                                        else:
+                                            _LOGGER.debug("Successfully obtained token")
+
+                                            # Create the config entry
+                                            return self.async_create_entry(
+                                                title=self._flow_impl.name,
+                                                data={
+                                                    "token": token,
+                                                    "auth_implementation": DOMAIN,
+                                                    "implementation": DOMAIN,
+                                                },
+                                            )
                         except Exception as err:
                             _LOGGER.error("Failed to exchange code for token: %s", err)
                             errors["callback_url"] = "token_exchange_failed"

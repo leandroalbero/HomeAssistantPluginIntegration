@@ -4,24 +4,11 @@
         "step": {
             "user": {
                 "title": "连接到海信空调",
-                "description": "选择认证方式：\n\n• 手动：复制/粘贴回调URL（适用于任何HA地址）\n• 自动：需要 homeassistant.local 可解析\n\n应用程序 ID：{app_id}",
+                "description": "您即将将您的海信空调（{app_name}）连接到 Home Assistant。\n\n应用程序 ID：{app_id}\n\n请确保您的 Home Assistant 实例可以通过以下地址访问：\n{oauth_callback_url}\n\n点击提交开始认证流程。",
                 "data": {
-                    "auth_method": "认证方式"
-                }
-            },
-            "manual_auth": {
-                "title": "手动认证 - 步骤 1/2",
-                "description": "步骤1：在浏览器中打开此URL：\n{auth_url}\n\n步骤2：使用您的海信ConnectLife凭据登录\n\n步骤3：登录后，从浏览器地址栏复制完整的回调URL\n\n步骤4：在下方粘贴回调URL并点击提交",
-                "data": {
-                    "callback_url": "在此粘贴回调URL"
+                    "confirm_auth": "是的，我要开始认证"
                 }
             }
-        },
-        "error": {
-            "required": "需要回调URL",
-            "no_code": "URL中未找到授权码",
-            "invalid_url": "URL格式无效",
-            "token_exchange_failed": "交换代码获取令牌失败"
         },
         "abort": {
             "already_configured": "设备已经配置",

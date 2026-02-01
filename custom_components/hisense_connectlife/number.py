@@ -1,5 +1,6 @@
 # file: number.py
 """Platform for Hisense AC number integration."""
+
 from __future__ import annotations
 
 import logging
@@ -34,7 +35,7 @@ NUMBER_TYPES = {
         "min_value": 16,
         "max_value": 32,
         "step": 0.5,
-        "description": "Set 1温区设置值"
+        "description": "Set 1温区设置值",
     },
     "t_zone2water_settemp2": {
         "key": "t_zone2water_settemp2",
@@ -46,9 +47,221 @@ NUMBER_TYPES = {
         "min_value": 16,
         "max_value": 32,
         "step": 0.5,
-        "description": "Set 2温区设置值"
-    }
+        "description": "Set 2温区设置值",
+    },
+    # Oven (013) - Step temperatures
+    "Step_1_set_temperature": {
+        "key": "Step_1_set_temperature",
+        "name": "Step 1 Temperature",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 30,
+        "max_value": 300,
+        "step": 1,
+        "description": "Set Step 1 target temperature",
+    },
+    "Step_2_set_temperature": {
+        "key": "Step_2_set_temperature",
+        "name": "Step 2 Temperature",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 30,
+        "max_value": 300,
+        "step": 1,
+        "description": "Set Step 2 target temperature",
+    },
+    "Step_3_set_temperature": {
+        "key": "Step_3_set_temperature",
+        "name": "Step 3 Temperature",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 30,
+        "max_value": 300,
+        "step": 1,
+        "description": "Set Step 3 target temperature",
+    },
+    # Oven (013) - Timer durations
+    "Sand_timer_1_duration_minutes": {
+        "key": "Sand_timer_1_duration_minutes",
+        "name": "Timer 1 Duration",
+        "icon": "mdi:timer",
+        "device_class": None,
+        "mode": NumberMode.AUTO,
+        "unit": "min",
+        "min_value": 0,
+        "max_value": 255,
+        "step": 1,
+        "description": "Set Timer 1 duration in minutes",
+    },
+    "Sand_timer_2_duration_minutes": {
+        "key": "Sand_timer_2_duration_minutes",
+        "name": "Timer 2 Duration",
+        "icon": "mdi:timer",
+        "device_class": None,
+        "mode": NumberMode.AUTO,
+        "unit": "min",
+        "min_value": 0,
+        "max_value": 255,
+        "step": 1,
+        "description": "Set Timer 2 duration in minutes",
+    },
+    "Sand_timer_3_duration_minutes": {
+        "key": "Sand_timer_3_duration_minutes",
+        "name": "Timer 3 Duration",
+        "icon": "mdi:timer",
+        "device_class": None,
+        "mode": NumberMode.AUTO,
+        "unit": "min",
+        "min_value": 0,
+        "max_value": 255,
+        "step": 1,
+        "description": "Set Timer 3 duration in minutes",
+    },
+    # Oven (013) - Meat probe temperature
+    "Meat_probe_set_temperature": {
+        "key": "Meat_probe_set_temperature",
+        "name": "Meat Probe Target",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 30,
+        "max_value": 100,
+        "step": 1,
+        "description": "Set meat probe target temperature",
+    },
+    # Oven (013) - Display settings
+    "Brightness": {
+        "key": "Brightness",
+        "name": "Display Brightness",
+        "icon": "mdi:brightness-6",
+        "device_class": None,
+        "mode": NumberMode.AUTO,
+        "unit": None,
+        "min_value": 0,
+        "max_value": 5,
+        "step": 1,
+        "description": "Set display brightness",
+    },
+    "Volume": {
+        "key": "Volume",
+        "name": "Sound Volume",
+        "icon": "mdi:volume-high",
+        "device_class": None,
+        "mode": NumberMode.AUTO,
+        "unit": None,
+        "min_value": 0,
+        "max_value": 5,
+        "step": 1,
+        "description": "Set sound volume",
+    },
+    # Heat Pump (044) - Zone target temperatures
+    "Trc1R1": {
+        "key": "Trc1R1",
+        "name": "Zone 1 Room 1 Target",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 16,
+        "max_value": 30,
+        "step": 0.5,
+        "description": "Set Zone 1 Room 1 target temperature",
+    },
+    "Trc1R2": {
+        "key": "Trc1R2",
+        "name": "Zone 1 Room 2 Target",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 16,
+        "max_value": 30,
+        "step": 0.5,
+        "description": "Set Zone 1 Room 2 target temperature",
+    },
+    "Trc1R3": {
+        "key": "Trc1R3",
+        "name": "Zone 1 Room 3 Target",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 16,
+        "max_value": 30,
+        "step": 0.5,
+        "description": "Set Zone 1 Room 3 target temperature",
+    },
+    "Trc1R4": {
+        "key": "Trc1R4",
+        "name": "Zone 1 Room 4 Target",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 16,
+        "max_value": 30,
+        "step": 0.5,
+        "description": "Set Zone 1 Room 4 target temperature",
+    },
+    "Trc2R1": {
+        "key": "Trc2R1",
+        "name": "Zone 2 Room 1 Target",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 16,
+        "max_value": 30,
+        "step": 0.5,
+        "description": "Set Zone 2 Room 1 target temperature",
+    },
+    # Heat Pump (044) - DHW and Pool temperatures
+    "TDHW": {
+        "key": "TDHW",
+        "name": "DHW Target Temperature",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 30,
+        "max_value": 60,
+        "step": 1,
+        "description": "Set DHW target temperature",
+    },
+    "Tswps": {
+        "key": "Tswps",
+        "name": "Pool Target Temperature",
+        "icon": "mdi:thermometer",
+        "device_class": NumberDeviceClass.TEMPERATURE,
+        "mode": NumberMode.AUTO,
+        "unit": "°C",
+        "min_value": 20,
+        "max_value": 35,
+        "step": 1,
+        "description": "Set pool target temperature",
+    },
+    # Heat Pump (044) - Hob warming zone
+    "HOB_warming_zone_power_level": {
+        "key": "HOB_warming_zone_power_level",
+        "name": "Hob Warming Zone Power",
+        "icon": "mdi:fire",
+        "device_class": None,
+        "mode": NumberMode.AUTO,
+        "unit": None,
+        "min_value": 0,
+        "max_value": 9,
+        "step": 1,
+        "description": "Set hob warming zone power level",
+    },
 }
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -56,7 +269,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Hisense AC number platform."""
-    coordinator: HisenseACPluginDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+    coordinator: HisenseACPluginDataUpdateCoordinator = hass.data[DOMAIN][
+        config_entry.entry_id
+    ]
 
     try:
         # Get devices from coordinator
@@ -77,26 +292,26 @@ async def async_setup_entry(
                     # Check if the device supports this attribute
                     parser = coordinator.api_client.parsers.get(device.device_id)
                     if device.has_attribute(number_info["key"], parser):
-                        if device.status.get("f_zone2_select") == "0" and number_type == "t_zone2water_settemp2":
+                        if (
+                            device.status.get("f_zone2_select") == "0"
+                            and number_type == "t_zone2water_settemp2"
+                        ):
                             continue
                         _LOGGER.info(
                             "Adding %s number for device: %s",
                             number_info["name"],
-                            device.name
+                            device.name,
                         )
                         entity = HisenseNumber(
-                            coordinator,
-                            device,
-                            number_type,
-                            number_info
+                            coordinator, device, number_type, number_info
                         )
                         entities.append(entity)
             else:
                 _LOGGER.warning(
                     "Skipping unsupported device: %s-%s (%s)",
-                    getattr(device, 'type_code', None),
-                    getattr(device, 'feature_code', None),
-                    getattr(device, 'name', None)
+                    getattr(device, "type_code", None),
+                    getattr(device, "feature_code", None),
+                    getattr(device, "name", None),
                 )
 
         if not entities:
@@ -109,6 +324,7 @@ async def async_setup_entry(
     except Exception as err:
         _LOGGER.error("Failed to set up number platform: %s", err)
         raise
+
 
 class HisenseNumber(CoordinatorEntity, NumberEntity):
     """Representation of a Hisense AC number."""
@@ -219,11 +435,23 @@ class HisenseNumber(CoordinatorEntity, NumberEntity):
 
         temperatures = self._temperatureRange[mode_index]
         if self._number_type == "t_zone2water_settemp2":
-            min_val = float(temperatures[2]) if temperatures[2] is not None else MIN_TEMP_WATER
+            min_val = (
+                float(temperatures[2])
+                if temperatures[2] is not None
+                else MIN_TEMP_WATER
+            )
             max_val = float(t1_temp) if t1_temp is not None else MAX_TEMP_WATER
         else:
-            min_val = float(temperatures[2]) if temperatures[2] is not None else MIN_TEMP_WATER
-            max_val = float(temperatures[3]) if temperatures[3] is not None else MAX_TEMP_WATER
+            min_val = (
+                float(temperatures[2])
+                if temperatures[2] is not None
+                else MIN_TEMP_WATER
+            )
+            max_val = (
+                float(temperatures[3])
+                if temperatures[3] is not None
+                else MAX_TEMP_WATER
+            )
 
         self._attr_native_min_value = min_val
         self._attr_native_max_value = max_val
@@ -287,7 +515,10 @@ class HisenseNumber(CoordinatorEntity, NumberEntity):
         """Set new target value."""
         try:
             # Ensure the value is within the valid range
-            if value < self._attr_native_min_value or value > self._attr_native_max_value:
+            if (
+                value < self._attr_native_min_value
+                or value > self._attr_native_max_value
+            ):
                 _LOGGER.error("Value out of range: %s", value)
                 return
 

@@ -1,4 +1,5 @@
 """Platform for Hisense AC switch integration."""
+
 from __future__ import annotations
 
 import datetime
@@ -30,31 +31,173 @@ SWITCH_TYPES = {
         "name": "Quiet Mode",
         "icon_on": "mdi:volume-off",
         "icon_off": "mdi:volume-high",
-        "description": "Toggle quiet mode"
+        "description": "Toggle quiet mode",
     },
     "rapid_mode": {
         "key": StatusKey.RAPID,
         "name": "Rapid Mode",
         "icon_on": "mdi:speedometer",
         "icon_off": "mdi:speedometer-slow",
-        "description": "Toggle rapid (powerful) mode"
+        "description": "Toggle rapid (powerful) mode",
     },
     "8heat_mode": {
         "key": StatusKey.EIGHTHEAT,
         "name": "8heat Mode",
         "icon_on": "mdi:fire",
         "icon_off": "mdi:fire-off",
-        "description": "Toggle 8heat mode"
-    }
-    # ,
-    # "eco_mode": {
-    #     "key": StatusKey.ECO,
-    #     "name": "Eco Mode",
-    #     "icon_on": "mdi:leaf",
-    #     "icon_off": "mdi:leaf-off",
-    #     "description": "Toggle eco mode"
-    # }
+        "description": "Toggle 8heat mode",
+    },
+    # Oven (013) switches
+    "oven_power": {
+        "key": "Status",
+        "name": "Power",
+        "icon_on": "mdi:power",
+        "icon_off": "mdi:power-off",
+        "description": "Toggle oven power",
+    },
+    "child_lock": {
+        "key": "Child_lock",
+        "name": "Child Lock",
+        "icon_on": "mdi:lock",
+        "icon_off": "mdi:lock-open",
+        "description": "Toggle child lock",
+    },
+    "interior_light": {
+        "key": "Interior_light",
+        "name": "Interior Light",
+        "icon_on": "mdi:lightbulb",
+        "icon_off": "mdi:lightbulb-off",
+        "description": "Toggle interior light",
+    },
+    "door_lock": {
+        "key": "Door_lock",
+        "name": "Door Lock",
+        "icon_on": "mdi:lock",
+        "icon_off": "mdi:lock-open",
+        "description": "Lock/unlock oven door",
+    },
+    "steam_shot": {
+        "key": "Steam_shot",
+        "name": "Steam Shot",
+        "icon_on": "mdi:water",
+        "icon_off": "mdi:water-off",
+        "description": "Toggle steam shot",
+    },
+    "night_mode": {
+        "key": "Night_mode_status",
+        "name": "Night Mode",
+        "icon_on": "mdi:moon-waning-crescent",
+        "icon_off": "mdi:weather-sunny",
+        "description": "Toggle night mode",
+    },
+    "gratin": {
+        "key": "Gratin_status",
+        "name": "Gratin",
+        "icon_on": "mdi:food-takeout-box",
+        "icon_off": "mdi:food-off",
+        "description": "Toggle gratin function",
+    },
+    "remote_control": {
+        "key": "Remote_control_monitoring",
+        "name": "Remote Control",
+        "icon_on": "mdi:remote",
+        "icon_off": "mdi:remote-off",
+        "description": "Toggle remote control",
+    },
+    # Heat Pump (044) switches
+    "c1_power": {
+        "key": "c1_SW_ON",
+        "name": "Zone 1 Power",
+        "icon_on": "mdi:power",
+        "icon_off": "mdi:power-off",
+        "description": "Toggle Zone 1 power",
+    },
+    "c2_power": {
+        "key": "c2_SW_ON",
+        "name": "Zone 2 Power",
+        "icon_on": "mdi:power",
+        "icon_off": "mdi:power-off",
+        "description": "Toggle Zone 2 power",
+    },
+    "dhw_power": {
+        "key": "DHW_SW_ON",
+        "name": "DHW Power",
+        "icon_on": "mdi:water-boiler",
+        "icon_off": "mdi:water-boiler-off",
+        "description": "Toggle DHW power",
+    },
+    "pool_power": {
+        "key": "SWP_SW_ON",
+        "name": "Pool Heating Power",
+        "icon_on": "mdi:pool",
+        "icon_off": "mdi:pool-off",
+        "description": "Toggle pool heating power",
+    },
+    "a2w_power": {
+        "key": "A2W_SW_ON",
+        "name": "A2W System Power",
+        "icon_on": "mdi:power",
+        "icon_off": "mdi:power-off",
+        "description": "Toggle A2W system power",
+    },
+    "silent_mode": {
+        "key": "isSilentMode",
+        "name": "Silent Mode",
+        "icon_on": "mdi:volume-mute",
+        "icon_off": "mdi:volume-high",
+        "description": "Toggle silent mode",
+    },
+    "eco_mode_hp": {
+        "key": "isECO",
+        "name": "ECO Mode",
+        "icon_on": "mdi:leaf",
+        "icon_off": "mdi:leaf-off",
+        "description": "Toggle ECO mode",
+    },
+    "fast_hot_water": {
+        "key": "isFastHotWater",
+        "name": "Fast Hot Water",
+        "icon_on": "mdi:water-plus",
+        "icon_off": "mdi:water-off",
+        "description": "Toggle fast hot water",
+    },
+    "disinfect": {
+        "key": "isDisinfect",
+        "name": "Disinfection",
+        "icon_on": "mdi:bacteria",
+        "icon_off": "mdi:bacteria-outline",
+        "description": "Toggle disinfection mode",
+    },
+    "hob_power": {
+        "key": "Hob_status",
+        "name": "Hob Power",
+        "icon_on": "mdi:power",
+        "icon_off": "mdi:power-off",
+        "description": "Toggle hob power",
+    },
+    "hob_warming_zone": {
+        "key": "HOB_warming_zone_status",
+        "name": "Hob Warming Zone",
+        "icon_on": "mdi:heat-wave",
+        "icon_off": "mdi:heat-wave-off",
+        "description": "Toggle hob warming zone",
+    },
+    "c1r1_active": {
+        "key": "c1R1_SW",
+        "name": "Zone 1 Room 1 Active",
+        "icon_on": "mdi:home",
+        "icon_off": "mdi:home-off",
+        "description": "Toggle Zone 1 Room 1",
+    },
+    "c1r2_active": {
+        "key": "c1R2_SW",
+        "name": "Zone 1 Room 2 Active",
+        "icon_on": "mdi:home",
+        "icon_off": "mdi:home-off",
+        "description": "Toggle Zone 1 Room 2",
+    },
 }
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -62,7 +205,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Hisense AC switch platform."""
-    coordinator: HisenseACPluginDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+    coordinator: HisenseACPluginDataUpdateCoordinator = hass.data[DOMAIN][
+        config_entry.entry_id
+    ]
 
     try:
         # Get devices from coordinator
@@ -86,9 +231,11 @@ async def async_setup_entry(
                         _LOGGER.info(
                             "Adding %s switch for device: %s",
                             switch_info["name"],
-                            device.name
+                            device.name,
                         )
-                        static_data = coordinator.api_client.static_data.get(device.device_id)
+                        static_data = coordinator.api_client.static_data.get(
+                            device.device_id
+                        )
                         if static_data:
                             rapid_mode = static_data.get("Super_function")
                             quiet_mode = static_data.get("Mute_mode_function")
@@ -99,16 +246,18 @@ async def async_setup_entry(
                         else:
                             if not device.status.get(switch_info["key"]):
                                 continue
-                        _LOGGER.info("当前设备: %s: %s",device.feature_code,device.status)
-                        #跟cl对齐，去掉200的静音
+                        _LOGGER.info(
+                            "当前设备: %s: %s", device.feature_code, device.status
+                        )
+                        # 跟cl对齐，去掉200的静音
                         if switch_type == "quiet_mode":
-                            if device.feature_code == 200 or device.feature_code == "200":
+                            if (
+                                device.feature_code == 200
+                                or device.feature_code == "200"
+                            ):
                                 continue
                         entity = HisenseSwitch(
-                            coordinator,
-                            device,
-                            switch_type,
-                            switch_info
+                            coordinator, device, switch_type, switch_info
                         )
                         entities.append(entity)
 
@@ -116,84 +265,123 @@ async def async_setup_entry(
                 if device.type_code == "007":
                     _LOGGER.info("除湿机添加风速进入: %s", device.feature_code)
                     parser = coordinator.api_client.parsers.get(device.device_id)
-                    _LOGGER.info("除湿机添加风速进入: %s: %s", device.feature_code, parser.attributes)
+                    _LOGGER.info(
+                        "除湿机添加风速进入: %s: %s",
+                        device.feature_code,
+                        parser.attributes,
+                    )
                     if parser and "t_fan_speed" in parser.attributes:
                         _LOGGER.info("除湿机添加风速进入: %s", device.feature_code)
-                        fan_attr = parser.attributes['t_fan_speed']
-                        _LOGGER.info("除湿机添加风速进入: %s: %s", device.feature_code,
-                                     parser.attributes.get("t_fan_speed"))
-                        static_data = coordinator.api_client.static_data.get(device.device_id)
+                        fan_attr = parser.attributes["t_fan_speed"]
+                        _LOGGER.info(
+                            "除湿机添加风速进入: %s: %s",
+                            device.feature_code,
+                            parser.attributes.get("t_fan_speed"),
+                        )
+                        static_data = coordinator.api_client.static_data.get(
+                            device.device_id
+                        )
                         if static_data:
-                            _LOGGER.info("获取到静态数据: %s: %s", device.feature_code, static_data)
+                            _LOGGER.info(
+                                "获取到静态数据: %s: %s",
+                                device.feature_code,
+                                static_data,
+                            )
                             # 构建功能标志字典（默认设为"0"）
                             feature_flags = {
-                                "自动": static_data.get("Wind_speed_gear_selection_auto", "0"),
-                                "中风": static_data.get("Wind_speed_gear_selection_middle", "0"),
-                                "高风": static_data.get("Wind_speed_gear_selection_high", "0"),
-                                "低风": static_data.get("Wind_speed_gear_selection_low", "0")
+                                "自动": static_data.get(
+                                    "Wind_speed_gear_selection_auto", "0"
+                                ),
+                                "中风": static_data.get(
+                                    "Wind_speed_gear_selection_middle", "0"
+                                ),
+                                "高风": static_data.get(
+                                    "Wind_speed_gear_selection_high", "0"
+                                ),
+                                "低风": static_data.get(
+                                    "Wind_speed_gear_selection_low", "0"
+                                ),
                             }
 
                             # 创建标签到数值的反向映射
-                            reverse_map = {'低风': '0', '高风': '1', '中风': '3', '自动': '2'}
+                            reverse_map = {
+                                "低风": "0",
+                                "高风": "1",
+                                "中风": "3",
+                                "自动": "2",
+                            }
 
                             # 遍历所有预定义风速标签
                             for label in ["自动", "中风", "高风", "低风"]:
                                 # 判断是否支持该风速
                                 if feature_flags[label] != "1":
-                                    _LOGGER.debug(f"设备 {device.name} 不支持 {label} 风速功能，跳过创建")
+                                    _LOGGER.debug(
+                                        f"设备 {device.name} 不支持 {label} 风速功能，跳过创建"
+                                    )
                                     continue
 
                                 # 获取对应的数值
                                 value_str = reverse_map.get(label)
                                 if value_str is None:
-                                    _LOGGER.warning(f"设备 {device.name} 风速标签 {label} 未找到对应数值，跳过创建")
+                                    _LOGGER.warning(
+                                        f"设备 {device.name} 风速标签 {label} 未找到对应数值，跳过创建"
+                                    )
                                     continue
 
                                 # 创建开关实体
-                                switch_type = f"fan_speed_{label.lower().replace(' ', '_')}"
+                                switch_type = (
+                                    f"fan_speed_{label.lower().replace(' ', '_')}"
+                                )
                                 switch_info = {
                                     "key": fan_attr.key,
                                     "name": f"{label} 风速",
                                     "icon_on": "mdi:fan",
                                     "icon_off": "mdi:fan-off",
                                     "description": f"切换到 {label} 风速",
-                                    "expected_value": value_str
+                                    "expected_value": value_str,
                                 }
                                 entity = HisenseSwitch(
                                     coordinator,
                                     device,
                                     switch_type,
                                     switch_info,
-                                    expected_value=value_str
+                                    expected_value=value_str,
                                 )
                                 entities.append(entity)
                         else:
                             for value_str, label in fan_attr.value_map.items():
-                                _LOGGER.info("除湿机添加风速进入: %s: %s: %s", device.feature_code, value_str, label)
-                                switch_type = f"fan_speed_{label.lower().replace(' ', '_')}"
+                                _LOGGER.info(
+                                    "除湿机添加风速进入: %s: %s: %s",
+                                    device.feature_code,
+                                    value_str,
+                                    label,
+                                )
+                                switch_type = (
+                                    f"fan_speed_{label.lower().replace(' ', '_')}"
+                                )
                                 switch_info = {
                                     "key": fan_attr.key,
                                     "name": f"{label} 风速",
                                     "icon_on": "mdi:fan",
                                     "icon_off": "mdi:fan-off",
                                     "description": f"切换到 {label} 风速",
-                                    "expected_value": value_str
+                                    "expected_value": value_str,
                                 }
                                 entity = HisenseSwitch(
                                     coordinator,
                                     device,
                                     switch_type,
                                     switch_info,
-                                    expected_value=value_str
+                                    expected_value=value_str,
                                 )
                                 entities.append(entity)
 
             else:
                 _LOGGER.warning(
                     "Skipping unsupported device: %s-%s (%s)",
-                    getattr(device, 'type_code', None),
-                    getattr(device, 'feature_code', None),
-                    getattr(device, 'name', None)
+                    getattr(device, "type_code", None),
+                    getattr(device, "feature_code", None),
+                    getattr(device, "name", None),
                 )
 
         if not entities:
@@ -207,6 +395,7 @@ async def async_setup_entry(
         _LOGGER.error("Failed to set up switch platform: %s", err)
         raise
 
+
 class HisenseSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of a Hisense AC switch."""
 
@@ -219,7 +408,7 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
         device: HisenseDeviceInfo,
         switch_type: str,
         switch_info: dict,
-        expected_value: str = None  # 新增参数
+        expected_value: str = None,  # 新增参数
     ) -> None:
         """Initialize the switch entity."""
         super().__init__(coordinator)
@@ -250,9 +439,7 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
         # 订阅设备状态变化事件
         self.async_on_remove(
             async_track_state_change_event(
-                self.hass,
-                [self.entity_id],
-                self._handle_device_state_change
+                self.hass, [self.entity_id], self._handle_device_state_change
             )
         )
 
@@ -303,6 +490,7 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
         translations = hass.data.get(f"{DOMAIN}.translations", {}).get(current_lang, {})
         translated_name = translations.get(translation_key, self._switch_info["name"])
         return translated_name
+
     @property
     def _device(self):
         """Get current device data from coordinator."""
@@ -311,14 +499,20 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        _LOGGER.info("设备 %s 是否可用: %s", self.feature_code, self._device.is_onOff)  # 调用方法并获取返回值
+        _LOGGER.info(
+            "设备 %s 是否可用: %s", self.feature_code, self._device.is_onOff
+        )  # 调用方法并获取返回值
         if not self._device or not self._device.is_online or not self._device.is_onOff:
             return False
 
         # Check if the switch should be hidden based on the current mode
         current_mode = self._device.get_status_value(StatusKey.MODE)
         if self._switch_type == "rapid_mode":
-            if current_mode in ["0", "4", "3"]:  # Assuming "0" is AUTO, "1" is FAN, and "3" is DEHUMIDIFY
+            if current_mode in [
+                "0",
+                "4",
+                "3",
+            ]:  # Assuming "0" is AUTO, "1" is FAN, and "3" is DEHUMIDIFY
                 return False
         elif self._switch_type == "quiet_mode":
             if current_mode in ["4", "3"]:  # Assuming "0" is AUTO and "1" is FAN
@@ -334,7 +528,9 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
             else:
                 if current_mode in ["4"]:  # 其他设备保持原逻辑
                     return False
-        elif self.device.type_code == "007" and self._switch_type.startswith("fan_speed_"):
+        elif self.device.type_code == "007" and self._switch_type.startswith(
+            "fan_speed_"
+        ):
             if current_mode in ["2"]:
                 return False
             # 新增逻辑：除湿机开启时风速开关不可选中
@@ -356,23 +552,24 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
         # 防跳变时间窗口结束，恢复使用云端状态
         _LOGGER.info("防跳变时间窗口结束，恢复使用云端状态")
         self.cached = False  # 重置缓存标志
-        if self.device.type_code == "007" and self._switch_type.startswith("fan_speed_"):
+        if self.device.type_code == "007" and self._switch_type.startswith(
+            "fan_speed_"
+        ):
             # 提取风速标签（如"低风"）
-            fan_speed_label = self._switch_type.split("_")[-1]  # 例如"fan_speed_低风" → "低风"
+            fan_speed_label = self._switch_type.split("_")[
+                -1
+            ]  # 例如"fan_speed_低风" → "低风"
 
             # 通过value_map将中文标签映射到数值
-            value_map = {
-                "自动": "2",
-                "中风": "3",
-                "高风": "1",
-                "低风": "0"
-            }
+            value_map = {"自动": "2", "中风": "3", "高风": "1", "低风": "0"}
             expected_value = value_map.get(fan_speed_label)  # 获取对应的数值
 
             # 获取当前设备风速值
             current_value = self._device.get_status_value("t_fan_speed")
 
-            _LOGGER.info("除湿机风速判断: 当前值=%s, 期望值=%s", current_value, expected_value)
+            _LOGGER.info(
+                "除湿机风速判断: 当前值=%s, 期望值=%s", current_value, expected_value
+            )
 
             # 比较当前值与期望值
             return current_value == expected_value
@@ -388,14 +585,21 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
         """Correctly handle fan speed switch icons"""
         if self._switch_type.startswith("fan_speed_"):
             # Use the icon from switch_info passed during initialization
-            return self._switch_info["icon_on"] if self.is_on else self._switch_info["icon_off"]
+            return (
+                self._switch_info["icon_on"]
+                if self.is_on
+                else self._switch_info["icon_off"]
+            )
         else:
             # Use predefined icons for other switches
             switch_info = SWITCH_TYPES.get(self._switch_type, {})
-            return switch_info.get("icon_on", "mdi:fan") if self.is_on else switch_info.get("icon_off", "mdi:fan-off")
+            return (
+                switch_info.get("icon_on", "mdi:fan")
+                if self.is_on
+                else switch_info.get("icon_off", "mdi:fan-off")
+            )
 
     # 修改 switch.py 中的 HisenseSwitch 类的 async_turn_on 方法：
-
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
@@ -463,11 +667,12 @@ class HisenseSwitch(CoordinatorEntity, SwitchEntity):
         if current_time - self._last_action_time < self._debounce_delay:
             _LOGGER.info("防跳变时间窗口内，延后更新状态")
             # 计算剩余时间
-            remaining_time = self._debounce_delay - (current_time - self._last_action_time)
+            remaining_time = self._debounce_delay - (
+                current_time - self._last_action_time
+            )
             # 延后触发更新
             self.hass.helpers.dispatcher.async_dispatcher_send(
-                f"{DOMAIN}_switch_update_{self.entity_id}",
-                remaining_time
+                f"{DOMAIN}_switch_update_{self.entity_id}", remaining_time
             )
         else:
             # 正常更新状态

@@ -285,7 +285,7 @@ class HisenseApiClient:
                         "fan_speed_low": "Low",
                         "fan_speed_high": "High",
                     }
-                _LOGGER.debug("Loaded translations for %s: %s", lang)
+                _LOGGER.debug("Loaded translations for %s", lang)
             except Exception as e:
                 _LOGGER.error(f"Failed to load translations for {lang}: {e}")
 
@@ -926,7 +926,7 @@ class HisenseApiClient:
                         step=1,
                         read_write="R",
                     )
-                    _LOGGER.debug("强制添加了f_power_consumption字段到解析器:%s")
+                    _LOGGER.debug("强制添加了f_power_consumption字段到解析器")
 
         _LOGGER.debug("filtered_attributes content: %s", filtered_attributes)
         # 创建一个新的BaseBeanParser对象，并将filtered_attributes赋值给它的attributes属性
